@@ -1,0 +1,18 @@
+{
+  "name": "theapplication",
+  "version": "1.0.0",
+  "description": "assignment3-2dv513-kr222if",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "Mosa Kasem Rasol",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.0",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.9"
+  }
+}
