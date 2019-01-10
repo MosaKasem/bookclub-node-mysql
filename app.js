@@ -1,75 +1,19 @@
 let port = process.env.PORT || 3000
 
 const express = require('express')
-const mysql = require('mysql')
+const database = require('./model/dbConnect')
 const exphbs = require('express-handlebars')
 const bodyparser = require('body-parser')
 
 const path = require('path')
 
 const app = express()
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'dbForBookAssignmentThree',
-  multipleStatements: true
-})
-db.connect((err) => {
-  if (err) console.log(err)
-  console.log('connected to database')
+
+app.get('/', (req, res) => {
+  res.send('hello')
 })
 
-app.get('/createDB', (req, res) => {
-  let sql = 'CREATE DATABASE IF NOT EXISTS dbForBookAssignmentThree'
-  db.query(sql, (err, result) => {
-    if (err) throw err
-    console.log(result)
-    res.send('database created')
-  })
-})
-
-app.get('/createTable', (req, res) => {
-/*   let sql = `CREATE TABLE IF NOT EXISTS books(
-    id int AUTO_INCREMENT,
-    title VARCHAR(255),
-    description VARCHAR(255),
-    stats VARCHAR(255),
-    author text(50),
-    published int(255),
-    FOREIGN KEY (stats) REFERENCES bookstats (stats),
-    PRIMARY KEY(id))` */
-  // let sql2 = `CREATE TABLE IF NOT EXISTS bookstats(stats VARCHAR(255))`
-  db.query(sql, (err, result) => {
-    if (err) console.log(err)
-    console.log(result)
-    res.send('post table created')
-  })
-})
-
-app.get('/addpost', (req, res) => {
-  let post = {title: 'titleoftitan', description: 'mahjog', stats: 'mahjog', author: 'mahjog', published: 1255}
-  let sql = 'INSERT INTO books SET ?'
-  let query = db.query(sql, post, (err, result) => {
-    if (err) console.log(err)
-    res.send('post added')
-  })
-})
-
-app.get('/selectPost', (req, res) => {
-  let sql = 'SELECT * FROM books'
-  let query = db.query(sql, (err, results) => {
-    if (err) console.log(err)
-    console.log(results)
-  })
-})
-app.get('/selectPostUrl/:id', (req, res) => {
-  let sql = `SELECT * FROM books WHERE author="${req.params.id}"`
-  let query = db.query(sql, (err, results) => {
-    if (err) console.log(err)
-    console.log(results)
-  })
-})
+app.get('/', require('./routes/booksRoutes'))
 
 app.use(bodyparser.urlencoded({extended: true}))
 
