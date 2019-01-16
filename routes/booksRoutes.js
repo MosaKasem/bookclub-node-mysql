@@ -8,13 +8,6 @@ db.connect((err) => {
   if (err) console.log(err)
   console.log('connected to database')
 })
-
-const getAllBooks = () => {
-  new Promise(async (resolve, reject) => {
-    const books = await query()
-  })
-}
-
 function executeQuery (query) {
   new Promise(async (resolve, reject) => {
     db.query(query, (err, result) => {
@@ -23,18 +16,33 @@ function executeQuery (query) {
     })
   })
 }
+const getAllBooks = () => {
+  new Promise(async (resolve, reject) => {
+    const books = await executeQuery(`
+    SELECT * FROM books`
+  )
+    resolve(books)
+  })
+}
 
 /* const db = database.connect((err) => {
   if (err) console.log(err)
   console.log('connected to database')
 }) */
 
-router.route('/books').get((req, res) => {
-  res.render('books/everybook')
+router.route('/books').get(async (req, res) => {
+  let books = await getAllBooks()
+  const allbooks = {
+    everybook: books.map((book) => {
+      return {
+        title: book.title
+      }
+    })
+  }
+  res.render('books/everybook', {allbooks})
 })
 
 router.route('/createDB').get((req, res) => {
-  console.log('here')
   let sql = 'CREATE DATABASE IF NOT EXISTS dbForBookAssignmentThree'
   db.query(sql, (err, result) => {
     if (err) throw err
