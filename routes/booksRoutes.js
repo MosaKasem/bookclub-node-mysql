@@ -1,17 +1,40 @@
 const router = require('express').Router()
+const bodyParser = require('body-parser')
+
+router.use(bodyParser.urlencoded({extended: true}))
 
 const db = require('../model/dbConnect')
+db.connect((err) => {
+  if (err) console.log(err)
+  console.log('connected to database')
+})
+
+const getAllBooks = () => {
+  new Promise(async (resolve, reject) => {
+    const books = await query()
+  })
+}
+
+function executeQuery (query) {
+  new Promise(async (resolve, reject) => {
+    db.query(query, (err, result) => {
+      if (err) console.log(err)
+      resolve(result)
+    })
+  })
+}
 
 /* const db = database.connect((err) => {
   if (err) console.log(err)
   console.log('connected to database')
 }) */
 
-router.route('/').get((req, res) => {
-  res.send('hello')
+router.route('/books').get((req, res) => {
+  res.render('books/everybook')
 })
 
 router.route('/createDB').get((req, res) => {
+  console.log('here')
   let sql = 'CREATE DATABASE IF NOT EXISTS dbForBookAssignmentThree'
   db.query(sql, (err, result) => {
     if (err) throw err
@@ -22,16 +45,16 @@ router.route('/createDB').get((req, res) => {
 
 router.route('/createTable').get((req, res) => {
   let sql = `CREATE TABLE IF NOT EXISTS books(
-      id int AUTO_INCREMENT,
-      title VARCHAR(255),
-      description VARCHAR(255),
-      stats VARCHAR(255),
-      author text(50),
-      published int(255),
-      FOREIGN KEY (stats) REFERENCES bookstats (stats),
-      PRIMARY KEY(id))`
-  // let sql2 = `CREATE TABLE IF NOT EXISTS bookstats(stats VARCHAR(255))`
-  db.query(sql, (err, result) => {
+      id int(11) NOT NULL AUTO_INCREMENT,
+      title VARCHAR(30),
+      description VARCHAR(30),
+      bookinfo VARCHAR(30),
+      author text,
+      published int,
+      PRIMARY KEY(id)
+    )`
+  let sql2 = `CREATE TABLE IF NOT EXISTS bookcategory()`
+  db.query(`${sql}; ${sql2}`, (err, result) => {
     if (err) console.log(err)
     console.log(result)
     res.send('post table created')
@@ -39,7 +62,7 @@ router.route('/createTable').get((req, res) => {
 })
 
 router.route('/addpost').get((req, res) => {
-  let post = {title: 'titleoftitan', description: 'mahjog', stats: 'mahjog', author: 'mahjog', published: 1255}
+  let post = {title: 'maximus', description: 'Jimmyswagfiftyshades', bookinfo: 'sweden', author: 'JohnSnow', published: 1655}
   let sql = 'INSERT INTO books SET ?'
   let query = db.query(sql, post, (err, result) => {
     if (err) console.log(err)
@@ -47,7 +70,8 @@ router.route('/addpost').get((req, res) => {
   })
 })
 
-router.route('/selectPost').get((req, res) => {
+router.route('/selectPost/:weee').get((req, res) => {
+  console.log(req.params.weee)
   let sql = 'SELECT * FROM books'
   let query = db.query(sql, (err, results) => {
     if (err) console.log(err)
@@ -55,6 +79,7 @@ router.route('/selectPost').get((req, res) => {
   })
 })
 router.route('/selectPostUrl/:id').get((req, res) => {
+  console.log('\n')
   let sql = `SELECT * FROM books WHERE author="${req.params.id}"`
   let query = db.query(sql, (err, results) => {
     if (err) console.log(err)
