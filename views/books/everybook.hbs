@@ -1,12 +1,12 @@
-        <h1>everybook</h1>
+<h1>everybook</h1>
 {{#each books}}
 <ul style="color:red;">
     <li>
-        <pre>{{title}}</pre>
-        <pre>{{description}}</pre>
-        <pre>{{bookinfo}}</pre>
-        <pre>{{author}}</pre>
-        <pre>{{published}}</pre>
+        <pre>{{this.title}}</pre>
+        <pre>{{this.description}}</pre>
+        <pre>{{this.bookinfo}}</pre>
+        <pre>{{this.author}}</pre>
+        <pre>{{this.published}}</pre>
     </li>
 </ul>
 {{/each}}
