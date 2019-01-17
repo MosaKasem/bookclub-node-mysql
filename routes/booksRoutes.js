@@ -1,3 +1,5 @@
+'use strict'
+
 const router = require('express').Router()
 const bodyParser = require('body-parser')
 
@@ -10,32 +12,12 @@ db.connect((err) => {
 })
 
 const getAllBooks = () => {
-  new Promise(async resolve => {
-    const books = await executeQuery('SELECT * FROM books')
-    console.log('books: ', books)
-    resolve(books)
-  })
-}
-const executeQuery = (query) => {
-  let data = {}
-  new Promise((resolve) => {
-    db.query(query, function (err, result) {
+  return new Promise(async resolve => {
+    await db.query('SELECT * FROM books', (err, result) => {
       if (err) throw err
-      data = {
-        id: result.id,
-        title: result.title,
-        description: result.description,
-        bookinfo: result.bookinfo,
-        author: result.author,
-        published: result.published
-      }
+      resolve(result)
+      // console.log('result: ', result)
     })
-    console.log(data)
-    resolve(data)
-/*     await db.query(query, (err, result) => {
-      if (err) throw err
-      return resolve(result)
-    }) */
   })
 }
 
@@ -48,18 +30,19 @@ router.route('/books')
   .get(async (req, res) => {
     let books = await getAllBooks()
     console.log('books: ', books)
+    // await console.log('books: ', books)
     res.render('books/everybook', {books})
   })
 
-router.route('/createDB').get((req, res) => {
+/* router.route('/createDB').get((req, res) => {
   let sql = 'CREATE DATABASE IF NOT EXISTS dbForBookAssignmentThree'
   db.query(sql, (err, result) => {
     if (err) throw err
 
     res.send('database created')
   })
-})
-
+}) */
+/*
 router.route('/createTable').get((req, res) => {
   let sql = `CREATE TABLE IF NOT EXISTS books(
       id int(11) NOT NULL AUTO_INCREMENT,
@@ -97,6 +80,6 @@ router.route('/selectPostUrl/:id').get((req, res) => {
   let query = db.query(sql, (err, results) => {
     if (err) throw err
   })
-})
+}) */
 
 module.exports = router
