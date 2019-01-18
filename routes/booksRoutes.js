@@ -11,6 +11,15 @@ db.connect((err) => {
   console.log('connected to phpmyadmin')
 })
 
+const retrieveData = (query) => {
+  return new Promise(resolve => {
+    db.query(query, (err, result) => {
+      if (err) throw err
+      resolve(result)
+    })
+  })
+}
+
 const getAllBooks = () => {
   return new Promise(async resolve => {
     await db.query('SELECT * FROM books', (err, result) => {
@@ -34,34 +43,48 @@ router.route('/books')
     res.render('books/everybook', {books})
   })
 
-/* router.route('/createDB').get((req, res) => {
+router.route('/createDB').get((req, res) => {
   let sql = 'CREATE DATABASE IF NOT EXISTS dbForBookAssignmentThree'
   db.query(sql, (err, result) => {
     if (err) throw err
 
     res.send('database created')
   })
-}) */
-/*
+})
+
 router.route('/createTable').get((req, res) => {
   let sql = `CREATE TABLE IF NOT EXISTS books(
       id int(11) NOT NULL AUTO_INCREMENT,
       title VARCHAR(30),
       description VARCHAR(30),
-      bookinfo VARCHAR(30),
+      bookinfo_id int,
       author text,
       published int,
       PRIMARY KEY(id)
     )`
-  let sql2 = `CREATE TABLE IF NOT EXISTS bookcategory()`
-  db.query(`${sql}; ${sql2}`, (err, result) => {
+  let sql2 = `CREATE TABLE IF NOT EXISTS region(
+      
+    )`
+  db.query(`${sql}`, (err, result) => {
     if (err) throw err
     res.send('post table created')
   })
 })
 
+/*
+1 == EUROPE
+2 == ASIA
+3 == AFRICA
+*/
+
 router.route('/addpost').get((req, res) => {
-  let post = {title: 'maximus', description: 'Jimmyswagfiftyshades', bookinfo: 'sweden', author: 'JohnSnow', published: 1655}
+  let post = {
+    title: `Daily Motivations for African Success`,
+    description: 'Inside are the tools that will help you focus on the thoughts, attitudes',
+    bookinfo: 'AFRICA',
+    bookinfo_id: 3,
+    author: 'Dennis Kimbro',
+    published: 2011}
   let sql = 'INSERT INTO books SET ?'
   let query = db.query(sql, post, (err, result) => {
     if (err) throw err
@@ -80,6 +103,6 @@ router.route('/selectPostUrl/:id').get((req, res) => {
   let query = db.query(sql, (err, results) => {
     if (err) throw err
   })
-}) */
+})
 
 module.exports = router
