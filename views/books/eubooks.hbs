@@ -1,0 +1,12 @@
+<p>output in the terminal</p>
+{{#each books}}
+<ul style="color:red;">
+    <li>
+        <pre><h1>title: {{this.title}}</h1></pre>
+        <p>booklength in pages: {{this.booklength}}</p>
+        <p>book culture: {{this.bookorigin}}</p>
+        <p>author: {{this.author}}</p>
+        <p>published: {{this.published}}</p>
+    </li>
+</ul>
+{{/each}}

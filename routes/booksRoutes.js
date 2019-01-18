@@ -22,11 +22,8 @@ const retrieveData = (query) => {
 
 const getAllBooks = () => {
   return new Promise(async resolve => {
-    await db.query('SELECT * FROM books', (err, result) => {
-      if (err) throw err
-      resolve(result)
-      // console.log('result: ', result)
-    })
+    let allbooks = await retrieveData('SELECT * FROM books')
+    resolve(allbooks)
   })
 }
 
@@ -39,8 +36,26 @@ router.route('/books')
   .get(async (req, res) => {
     let books = await getAllBooks()
     console.log('books: ', books)
-    // await console.log('books: ', books)
     res.render('books/everybook', {books})
+  })
+
+router.route('/longestbook')
+  .get(async (req, res) => {
+    let book = await db.query('SELECT title, booklength FROM books where booklength = (SELECT MAX(booklength) FROM books)', (err, result) => {
+      if (err) throw err
+      console.log(`longestbook--------------------\n`, result, `\nlongestbook--------------------`)
+      res.render('books/longestbook', {result})
+    })
+  })
+router.route('/eubooks')
+  .get(async (req, res) => {
+    let eubooks = await retrieveData(
+      `SELECT * FROM books 
+      INNER JOIN 
+      region ON region.bookorigin_id = books.bookorigin_id 
+      WHERE books.bookorigin_id = 1`)
+    console.log('--------------------eubooks\n ', eubooks, '\n--------------------eubooks')
+    res.render('books/eubooks', {eubooks})
   })
 
 router.route('/createDB').get((req, res) => {
@@ -56,16 +71,17 @@ router.route('/createTable').get((req, res) => {
   let sql = `CREATE TABLE IF NOT EXISTS books(
       id int(11) NOT NULL AUTO_INCREMENT,
       title VARCHAR(30),
-      description VARCHAR(30),
-      bookinfo_id int,
+      booklength int,
+      bookorigin_id int,
       author text,
       published int,
       PRIMARY KEY(id)
     )`
   let sql2 = `CREATE TABLE IF NOT EXISTS region(
-      
+    bookorigin_id int, 
+    bookorigin VARCHAR(50)
     )`
-  db.query(`${sql}`, (err, result) => {
+  db.query(`${sql2}`, (err, result) => {
     if (err) throw err
     res.send('post table created')
   })
@@ -78,14 +94,20 @@ router.route('/createTable').get((req, res) => {
 */
 
 router.route('/addpost').get((req, res) => {
-  let post = {
-    title: `Daily Motivations for African Success`,
-    description: 'Inside are the tools that will help you focus on the thoughts, attitudes',
-    bookinfo: 'AFRICA',
-    bookinfo_id: 3,
-    author: 'Dennis Kimbro',
-    published: 2011}
-  let sql = 'INSERT INTO books SET ?'
+  // for book
+/*   let post = {
+    title: `Who Went Out Of Africa`,
+    booklength: 437,
+    bookorigin_id: 3,
+    author: 'Annonymous',
+    published: 2016}
+  let sql = 'INSERT INTO books SET ?' */
+  // for region
+/*   let post = {
+    bookorigin_id: 3,
+    bookorigin: 'Africa'
+  }
+  let sql = 'INSERT INTO region SET ?' */
   let query = db.query(sql, post, (err, result) => {
     if (err) throw err
     res.send('post added')
