@@ -58,6 +58,28 @@ router.route('/eubooks')
     res.render('books/eubooks', {eubooks})
   })
 
+router.route('/africanbooks')
+  .get(async (req, res) => {
+    let africanbooks = await retrieveData(
+      `SELECT * FROM books 
+      INNER JOIN 
+      region ON region.bookorigin_id = books.bookorigin_id 
+      WHERE books.bookorigin_id = 3`)
+    console.log('--------------------africa books\n ', africanbooks, '\n--------------------africa books')
+    res.render('books/eubooks', {africanbooks})
+  })
+
+router.route('/asiabooks')
+  .get(async (req, res) => {
+    let asiabooks = await retrieveData(
+      `SELECT * FROM books 
+      INNER JOIN 
+      region ON region.bookorigin_id = books.bookorigin_id 
+      WHERE books.bookorigin_id = 2`)
+    console.log('--------------------asiabooks \n ', asiabooks, '\n--------------------asiabooks ')
+    res.render('books/eubooks', {asiabooks})
+  })
+
 router.route('/createDB').get((req, res) => {
   let sql = 'CREATE DATABASE IF NOT EXISTS dbForBookAssignmentThree'
   db.query(sql, (err, result) => {
